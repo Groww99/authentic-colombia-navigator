@@ -1,128 +1,122 @@
+import { MapContainer, TileLayer, Marker, Popup, Polyline, CircleMarker, useMap } from "react-leaflet";
 import { festivals, roads } from "@/data/mock";
-import { MapPin, Layers, Plus, Minus, Compass } from "lucide-react";
+import { Layers, Flame, Calendar, MapPin as PinIcon } from "lucide-react";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { useEffect } from "react";
 
-// Bounding box approx Colombia
-const minLng = -79, maxLng = -67, minLat = -4.2, maxLat = 13;
-const project = (lat: number, lng: number) => ({
-  x: ((lng - minLng) / (maxLng - minLng)) * 100,
-  y: ((maxLat - lat) / (maxLat - minLat)) * 100,
+// Custom pin icon using brand colors
+const fiestaIcon = L.divIcon({
+  className: "",
+  html: `<div style="position:relative;width:32px;height:32px;">
+    <div style="position:absolute;inset:0;border-radius:9999px;background:hsl(46 100% 48% / 0.4);animation:pulse 2s infinite;"></div>
+    <div style="position:relative;display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9999px;background:linear-gradient(135deg,hsl(46 100% 48%),hsl(13 78% 57%));box-shadow:0 0 20px hsl(46 100% 48% / 0.6);border:2px solid white;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+    </div>
+  </div>`,
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
 });
 
-const roadStatusColor: Record<string, string> = {
-  open: "hsl(var(--secondary))",
-  partial: "hsl(var(--gold))",
-  closed: "hsl(var(--destructive))",
+// Real road coordinates (approx polylines of major Colombian roads)
+const roadPolylines: { id: string; name: string; status: "open" | "partial" | "closed"; coords: [number, number][] }[] = [
+  { id: "r1", name: "Bogotá–Villavicencio", status: "partial", coords: [[4.7110, -74.0721], [4.4389, -74.2067], [4.1420, -73.6266]] },
+  { id: "r2", name: "Neiva–Pitalito", status: "open", coords: [[2.9273, -75.2819], [2.5362, -75.5230], [1.8573, -76.0476]] },
+  { id: "r3", name: "Mompox–Magangué", status: "closed", coords: [[9.2414, -74.4260], [9.0895, -74.5710], [9.2419, -74.7532]] },
+  { id: "r4", name: "Vélez–Barbosa", status: "open", coords: [[6.0095, -73.6729], [5.9311, -73.6164]] },
+  { id: "r5", name: "Aguazul–Yopal", status: "partial", coords: [[5.1719, -72.5476], [5.3378, -72.3959]] },
+  { id: "r6", name: "Bogotá–Neiva", status: "open", coords: [[4.7110, -74.0721], [4.1533, -74.8847], [2.9273, -75.2819]] },
+  { id: "r7", name: "Medellín–Riosucio", status: "open", coords: [[6.2442, -75.5812], [5.6947, -75.6758], [5.4239, -75.7022]] },
+];
+
+const roadColor: Record<string, string> = {
+  open: "hsl(150 60% 45%)",
+  partial: "hsl(46 100% 48%)",
+  closed: "hsl(0 75% 55%)",
 };
 
-// Synthetic road polylines connecting festival points pairwise
-const roadLines = [
-  { id: "rl1", a: "1", b: "4", status: "open" },
-  { id: "rl2", a: "2", b: "6", status: "partial" },
-  { id: "rl3", a: "3", b: "5", status: "closed" },
-  { id: "rl4", a: "4", b: "1", status: "open" },
-];
+function FitBounds() {
+  const map = useMap();
+  useEffect(() => {
+    const bounds = L.latLngBounds(festivals.map((f) => [f.lat, f.lng] as [number, number]));
+    map.fitBounds(bounds, { padding: [40, 40] });
+  }, [map]);
+  return null;
+}
 
 export default function MapCanvas() {
   return (
-    <div className="relative w-full h-full overflow-hidden rounded-xl border border-border bg-deep">
-      {/* Topographic gradient base */}
-      <div className="absolute inset-0 bg-jungle opacity-40" />
-      <div className="absolute inset-0 grid-bg opacity-30" />
+    <div className="relative w-full h-full overflow-hidden rounded-xl border-2 border-border shadow-card">
+      <MapContainer
+        center={[4.5709, -74.2973]}
+        zoom={6}
+        scrollWheelZoom
+        className="w-full h-full z-0"
+        style={{ background: "hsl(var(--deep))" }}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> &copy; OpenStreetMap'
+          url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
+        />
+        <FitBounds />
 
-      {/* Decorative ridges (SVG) */}
-      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-        <defs>
-          <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="hsl(46 100% 48% / 0.25)" />
-            <stop offset="100%" stopColor="transparent" />
-          </radialGradient>
-        </defs>
-        <ellipse cx="50" cy="55" rx="40" ry="35" fill="url(#glow)" />
+        {/* Heatmap circles */}
+        {festivals.map((f) => (
+          <CircleMarker
+            key={`heat-${f.id}`}
+            center={[f.lat, f.lng]}
+            radius={f.heat / 3}
+            pathOptions={{ color: "hsl(13 78% 57%)", fillColor: "hsl(13 78% 57%)", fillOpacity: f.heat / 300, weight: 0 }}
+          />
+        ))}
 
         {/* Roads */}
-        {roadLines.map((r) => {
-          const a = festivals.find((f) => f.id === r.a)!;
-          const b = festivals.find((f) => f.id === r.b)!;
-          const pa = project(a.lat, a.lng);
-          const pb = project(b.lat, b.lng);
-          const cx = (pa.x + pb.x) / 2 + (Math.random() - 0.5) * 6;
-          const cy = (pa.y + pb.y) / 2 - 4;
-          return (
-            <path
-              key={r.id}
-              d={`M ${pa.x} ${pa.y} Q ${cx} ${cy} ${pb.x} ${pb.y}`}
-              stroke={roadStatusColor[r.status]}
-              strokeWidth="0.4"
-              strokeDasharray={r.status === "closed" ? "1 1" : r.status === "partial" ? "2 1" : "0"}
-              fill="none"
-              opacity="0.85"
-            />
-          );
-        })}
-
-        {/* Heat circles */}
-        {festivals.map((f) => {
-          const p = project(f.lat, f.lng);
-          return (
-            <circle
-              key={`heat-${f.id}`}
-              cx={p.x}
-              cy={p.y}
-              r={f.heat / 18}
-              fill="hsl(13 78% 57%)"
-              opacity={f.heat / 250}
-            />
-          );
-        })}
-      </svg>
-
-      {/* Festival pins */}
-      {festivals.map((f) => {
-        const p = project(f.lat, f.lng);
-        return (
-          <div
-            key={f.id}
-            className="absolute -translate-x-1/2 -translate-y-full group cursor-pointer"
-            style={{ left: `${p.x}%`, top: `${p.y}%` }}
+        {roadPolylines.map((r) => (
+          <Polyline
+            key={r.id}
+            positions={r.coords}
+            pathOptions={{
+              color: roadColor[r.status],
+              weight: 4,
+              opacity: 0.85,
+              dashArray: r.status === "closed" ? "8 6" : r.status === "partial" ? "12 4" : undefined,
+            }}
           >
-            <div className="relative">
-              <div className="absolute inset-0 rounded-full bg-primary animate-pulse-dot" />
-              <div className="relative bg-sun text-primary-foreground rounded-full p-1.5 shadow-glow">
-                <MapPin className="h-3.5 w-3.5" />
-              </div>
-            </div>
-            <div className="absolute left-1/2 -translate-x-1/2 mt-1 whitespace-nowrap opacity-0 group-hover:opacity-100 transition pointer-events-none">
-              <div className="bg-card border border-border rounded-md px-2 py-1 text-[10px] font-semibold text-foreground shadow-card">
-                {f.name}
-              </div>
-            </div>
-          </div>
-        );
-      })}
+            <Popup>
+              <div className="text-xs font-semibold">{r.name}</div>
+              <div className="text-[11px] capitalize" style={{ color: roadColor[r.status] }}>{r.status === "open" ? "Vía abierta" : r.status === "partial" ? "Parcial" : "Cerrada"}</div>
+            </Popup>
+          </Polyline>
+        ))}
 
-      {/* Map controls */}
-      <div className="absolute top-3 right-3 flex flex-col gap-1.5">
-        <button className="bg-card/90 backdrop-blur border border-border rounded-md p-2 hover:bg-card transition" aria-label="Acercar">
-          <Plus className="h-4 w-4 text-foreground" />
-        </button>
-        <button className="bg-card/90 backdrop-blur border border-border rounded-md p-2 hover:bg-card transition" aria-label="Alejar">
-          <Minus className="h-4 w-4 text-foreground" />
-        </button>
-        <button className="bg-card/90 backdrop-blur border border-border rounded-md p-2 hover:bg-card transition" aria-label="Brújula">
-          <Compass className="h-4 w-4 text-foreground" />
-        </button>
-      </div>
+        {/* Festival pins */}
+        {festivals.map((f) => (
+          <Marker key={f.id} position={[f.lat, f.lng]} icon={fiestaIcon}>
+            <Popup>
+              <div className="min-w-[200px]">
+                <div className="font-display text-lg tracking-wider text-foreground">{f.name}</div>
+                <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-1"><PinIcon className="h-3 w-3" /> {f.town}, {f.department}</div>
+                <div className="text-[11px] text-muted-foreground flex items-center gap-1"><Calendar className="h-3 w-3" /> {new Date(f.startDate).toLocaleDateString('es-CO', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
+                <div className="text-[11px] flex items-center gap-1 mt-1 text-coral font-semibold"><Flame className="h-3 w-3" /> Ambiente {f.heat}/100</div>
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {f.tags.map((t) => (
+                    <span key={t} className="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-semibold">{t}</span>
+                  ))}
+                </div>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+      </MapContainer>
 
       {/* Legend */}
-      <div className="absolute bottom-3 left-3 bg-card/90 backdrop-blur border border-border rounded-lg p-3 text-xs space-y-1.5 shadow-card">
+      <div className="absolute bottom-3 left-3 bg-card/95 backdrop-blur border-2 border-border rounded-lg p-3 text-xs space-y-1.5 shadow-glow z-[400]">
         <p className="font-display tracking-wider text-foreground flex items-center gap-1.5"><Layers className="h-3 w-3" /> Capa INVIAS</p>
-        <div className="flex items-center gap-2"><span className="h-1 w-6 rounded" style={{ background: "hsl(var(--secondary))" }} /> Vía abierta</div>
-        <div className="flex items-center gap-2"><span className="h-1 w-6 rounded" style={{ background: "hsl(var(--gold))" }} /> Parcial</div>
-        <div className="flex items-center gap-2"><span className="h-1 w-6 rounded" style={{ background: "hsl(var(--destructive))" }} /> Cerrada</div>
-      </div>
-
-      <div className="absolute bottom-3 right-3 text-[10px] text-muted-foreground">
-        Mapa demo · listo para Mapbox SDK
+        <div className="flex items-center gap-2"><span className="h-1 w-6 rounded" style={{ background: roadColor.open }} /> Vía abierta</div>
+        <div className="flex items-center gap-2"><span className="h-1 w-6 rounded" style={{ background: roadColor.partial }} /> Parcial</div>
+        <div className="flex items-center gap-2"><span className="h-1 w-6 rounded" style={{ background: roadColor.closed }} /> Cerrada</div>
+        <div className="pt-1 border-t border-border flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-coral" /> Heatmap ambiente</div>
       </div>
     </div>
   );
