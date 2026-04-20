@@ -4,26 +4,29 @@ import { Link } from "react-router-dom";
 import FestivalCard from "@/components/app/FestivalCard";
 
 const cards = [
-  { label: "Festividades activas", value: stats.festivals, icon: Calendar, accent: "text-primary", bg: "bg-primary/10" },
-  { label: "Pueblos cubiertos", value: stats.towns, icon: MapPin, accent: "text-coral", bg: "bg-coral/10" },
-  { label: "Vías monitoreadas", value: stats.roadsMonitored, icon: Spline, accent: "text-jungle", bg: "bg-secondary/15" },
-  { label: "Scrapeadas esta semana", value: stats.scrapedThisWeek, icon: Sparkles, accent: "text-gold", bg: "bg-gold/10" },
+  { label: "Festividades activas", value: stats.festivals, icon: Calendar, accent: "text-primary-foreground", bg: "bg-sun", ring: "hover:shadow-glow" },
+  { label: "Pueblos cubiertos", value: stats.towns, icon: MapPin, accent: "text-accent-foreground", bg: "bg-tropic", ring: "hover:shadow-coral" },
+  { label: "Vías monitoreadas", value: stats.roadsMonitored, icon: Spline, accent: "text-secondary-foreground", bg: "bg-jungle", ring: "hover:shadow-card" },
+  { label: "Scrapeadas esta semana", value: stats.scrapedThisWeek, icon: Sparkles, accent: "text-primary-foreground", bg: "bg-fiesta", ring: "hover:shadow-glow" },
 ];
 
 export default function Dashboard() {
   return (
     <div className="p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto">
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-2xl border border-border bg-hero p-6 md:p-10 shadow-card">
-        <div className="absolute inset-0 grid-bg opacity-20" />
-        <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-sun opacity-30 blur-3xl animate-float" />
+      <section className="relative overflow-hidden rounded-2xl border-2 border-primary/40 pattern-mola p-6 md:p-10 shadow-card">
+        <div className="absolute inset-0 pattern-confetti opacity-40 mix-blend-screen" />
+        <div className="absolute -top-24 -right-16 h-72 w-72 rounded-full bg-sun opacity-50 blur-3xl animate-float" />
+        <div className="absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-tropic opacity-40 blur-3xl animate-float" />
+        <div className="absolute top-6 right-6 h-16 w-16 rounded-full bg-fiesta opacity-80 blur-sm animate-pulse-dot" />
         <div className="relative max-w-2xl space-y-4">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 border border-primary/30 px-3 py-1 text-xs font-semibold text-primary">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-fiesta border border-primary/40 px-3 py-1 text-xs font-semibold text-primary-foreground shadow-glow">
             <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
             v0.1 · Demo en vivo
           </span>
-          <h1 className="font-display text-5xl md:text-7xl tracking-wider text-foreground leading-none text-balance">
-            Descubre la Colombia <span className="text-primary">auténtica</span>
+          <h1 className="font-display text-5xl md:text-7xl tracking-wider text-foreground leading-none text-balance drop-shadow-[0_4px_24px_hsl(var(--deep)/0.8)]">
+            Descubre la Colombia{" "}
+            <span className="bg-sun bg-clip-text text-transparent">auténtica</span>
           </h1>
           <p className="text-base md:text-lg text-muted-foreground max-w-xl">
             NomadAp orquesta IA, mapas inteligentes y datos abiertos para visibilizar las festividades de los pueblos categoría 4 a 6.
@@ -32,8 +35,8 @@ export default function Dashboard() {
             <Link to="/mapa" className="inline-flex items-center gap-2 rounded-lg bg-sun px-5 py-3 font-semibold text-primary-foreground shadow-glow hover:opacity-90 transition">
               Abrir mapa <ArrowUpRight className="h-4 w-4" />
             </Link>
-            <Link to="/asistente" className="inline-flex items-center gap-2 rounded-lg border border-border bg-card/60 backdrop-blur px-5 py-3 font-semibold text-foreground hover:bg-card transition">
-              <Sparkles className="h-4 w-4 text-primary" /> Hablar con la IA
+            <Link to="/asistente" className="inline-flex items-center gap-2 rounded-lg border border-coral/60 bg-coral/15 backdrop-blur px-5 py-3 font-semibold text-foreground hover:bg-coral/25 transition">
+              <Sparkles className="h-4 w-4 text-coral" /> Hablar con la IA
             </Link>
           </div>
         </div>
@@ -42,13 +45,14 @@ export default function Dashboard() {
       {/* Stats */}
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         {cards.map((c) => (
-          <div key={c.label} className="rounded-xl border border-border bg-card p-4 shadow-card">
-            <div className={`inline-flex p-2 rounded-lg ${c.bg} ${c.accent} mb-3`}>
+          <div key={c.label} className={`relative overflow-hidden rounded-xl border border-border bg-card p-4 shadow-card transition-all ${c.ring} hover:-translate-y-0.5`}>
+            <div className={`absolute -top-8 -right-8 h-24 w-24 rounded-full ${c.bg} opacity-60 blur-2xl`} />
+            <div className={`relative inline-flex p-2 rounded-lg ${c.bg} ${c.accent} mb-3 shadow-card`}>
               <c.icon className="h-4 w-4" />
             </div>
-            <p className="font-display text-4xl tracking-wider text-foreground leading-none">{c.value}</p>
-            <p className="text-xs text-muted-foreground mt-1.5">{c.label}</p>
-            <p className="text-[10px] text-secondary-foreground mt-2 flex items-center gap-1"><TrendingUp className="h-3 w-3" /> +12% mes</p>
+            <p className="relative font-display text-4xl tracking-wider text-foreground leading-none">{c.value}</p>
+            <p className="relative text-xs text-muted-foreground mt-1.5">{c.label}</p>
+            <p className="relative text-[10px] text-jungle mt-2 flex items-center gap-1 font-semibold"><TrendingUp className="h-3 w-3" /> +12% mes</p>
           </div>
         ))}
       </section>
