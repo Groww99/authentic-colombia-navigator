@@ -14,11 +14,12 @@ export default function Dashboard() {
   return (
     <div className="p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto">
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-2xl border-2 border-primary/40 pattern-mola p-6 md:p-10 shadow-card">
-        <div className="absolute inset-0 pattern-confetti opacity-40 mix-blend-screen" />
-        <div className="absolute -top-24 -right-16 h-72 w-72 rounded-full bg-sun opacity-50 blur-3xl animate-float" />
-        <div className="absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-tropic opacity-40 blur-3xl animate-float" />
-        <div className="absolute top-6 right-6 h-16 w-16 rounded-full bg-fiesta opacity-80 blur-sm animate-pulse-dot" />
+      <section className="relative overflow-hidden rounded-2xl border-2 border-primary/40 bg-selva p-6 md:p-10 shadow-card">
+        <div className="absolute inset-0 pattern-cafe opacity-50" />
+        <div className="absolute inset-x-0 bottom-0 h-40 pattern-andes" />
+        <div className="absolute -top-20 -right-10 h-64 w-64 rounded-full bg-sun opacity-40 blur-3xl animate-float" aria-hidden />
+        {/* Sol radiante estilo bandera */}
+        <div className="absolute top-8 right-8 h-20 w-20 rounded-full bg-gold opacity-90 shadow-glow animate-pulse-dot" aria-hidden />
         <div className="relative max-w-2xl space-y-4">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-fiesta border border-primary/40 px-3 py-1 text-xs font-semibold text-primary-foreground shadow-glow">
             <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
