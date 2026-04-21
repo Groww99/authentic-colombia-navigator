@@ -14,8 +14,8 @@ export default function Dashboard() {
   return (
     <div className="p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto">
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-2xl border-2 border-primary/40 bg-selva p-6 md:p-10 shadow-card">
-        <div className="absolute inset-0 pattern-cafe opacity-50" />
+      <section className="relative overflow-hidden rounded-2xl border-2 border-primary/40 bg-cafe p-6 md:p-10 shadow-card">
+        <div className="absolute inset-0 pattern-cafe opacity-60" />
         <div className="absolute inset-x-0 bottom-0 h-40 pattern-andes" />
         <div className="absolute -top-20 -right-10 h-64 w-64 rounded-full bg-sun opacity-40 blur-3xl animate-float" aria-hidden />
         {/* Sol radiante estilo bandera */}
@@ -27,7 +27,7 @@ export default function Dashboard() {
           </span>
           <h1 className="font-display text-5xl md:text-7xl tracking-wider text-foreground leading-none text-balance drop-shadow-[0_4px_24px_hsl(var(--deep)/0.8)]">
             Descubre la Colombia{" "}
-            <span className="bg-sun bg-clip-text text-transparent">auténtica</span>
+            <span className="text-gold italic">auténtica</span>
           </h1>
           <p className="text-base md:text-lg text-muted-foreground max-w-xl">
             NomadAp orquesta IA, mapas inteligentes y datos abiertos para visibilizar las festividades de los pueblos categoría 4 a 6.
