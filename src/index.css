@@ -112,21 +112,36 @@ All colors MUST be HSL.
   .pattern-mola {
     background-color: hsl(173 60% 8%);
     background-image:
-      radial-gradient(circle at 20% 20%, hsl(13 78% 57% / 0.35) 0, transparent 28%),
-      radial-gradient(circle at 80% 15%, hsl(46 100% 55% / 0.35) 0, transparent 28%),
-      radial-gradient(circle at 75% 80%, hsl(152 60% 45% / 0.35) 0, transparent 30%),
-      radial-gradient(circle at 15% 85%, hsl(280 60% 55% / 0.30) 0, transparent 30%),
-      radial-gradient(circle at 50% 50%, hsl(340 70% 55% / 0.20) 0, transparent 40%);
+      radial-gradient(ellipse 60% 40% at 15% 100%, hsl(152 60% 30% / 0.55) 0, transparent 60%),
+      radial-gradient(ellipse 70% 35% at 85% 100%, hsl(173 55% 25% / 0.55) 0, transparent 60%),
+      radial-gradient(ellipse 50% 30% at 50% 95%, hsl(46 90% 35% / 0.30) 0, transparent 70%),
+      radial-gradient(circle at 80% 20%, hsl(46 100% 55% / 0.25) 0, transparent 25%);
   }
 
-  .pattern-confetti {
+  /* Patrón mochila wayuu — rombos geométricos tejidos */
+  .pattern-wayuu {
+    background-color: transparent;
     background-image:
-      radial-gradient(hsl(46 100% 55% / 0.9) 2px, transparent 2.5px),
-      radial-gradient(hsl(13 78% 57% / 0.9) 2px, transparent 2.5px),
-      radial-gradient(hsl(152 60% 45% / 0.9) 2px, transparent 2.5px),
-      radial-gradient(hsl(280 60% 60% / 0.9) 2px, transparent 2.5px);
-    background-size: 48px 48px, 56px 56px, 64px 64px, 72px 72px;
-    background-position: 0 0, 18px 22px, 32px 8px, 48px 36px;
+      linear-gradient(135deg, hsl(46 100% 48% / 0.18) 25%, transparent 25%),
+      linear-gradient(225deg, hsl(13 78% 57% / 0.18) 25%, transparent 25%),
+      linear-gradient(45deg, hsl(152 51% 36% / 0.18) 25%, transparent 25%),
+      linear-gradient(315deg, hsl(173 50% 25% / 0.18) 25%, transparent 25%);
+    background-size: 28px 28px;
+    background-position: 14px 0, 14px 0, 0 0, 0 0;
+  }
+
+  /* Silueta de montañas andinas en SVG */
+  .pattern-andes {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'><path d='M0,200 L0,140 L80,90 L160,130 L240,70 L340,120 L420,60 L520,110 L600,40 L700,100 L790,70 L880,130 L970,80 L1080,120 L1200,90 L1200,200 Z' fill='%231a4a3a' opacity='0.55'/><path d='M0,200 L0,160 L100,120 L200,150 L320,100 L440,140 L560,90 L680,130 L800,100 L920,140 L1040,110 L1200,150 L1200,200 Z' fill='%23103028' opacity='0.75'/></svg>");
+    background-repeat: no-repeat;
+    background-position: bottom center;
+    background-size: 100% auto;
+  }
+
+  /* Hojas de café — patrón orgánico repetido */
+  .pattern-cafe {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><g fill='none' stroke='%2334a36b' stroke-width='1.2' opacity='0.35'><path d='M30,30 Q45,15 60,30 Q45,45 30,30 Z M30,30 L60,30'/><path d='M85,75 Q100,60 115,75 Q100,90 85,75 Z M85,75 L115,75'/><path d='M20,90 Q35,75 50,90 Q35,105 20,90 Z M20,90 L50,90'/></g></svg>");
+    background-size: 140px 140px;
   }
 
   .ring-fiesta {
