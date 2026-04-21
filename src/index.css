@@ -99,6 +99,8 @@ All colors MUST be HSL.
   .bg-fiesta { background: var(--gradient-fiesta); }
   .bg-tropic { background: var(--gradient-tropic); }
   .bg-selva { background: var(--gradient-selva); }
+  .bg-cafe { background: var(--gradient-cafe); }
+  .bg-tierra { background: var(--gradient-tierra); }
   .shadow-glow { box-shadow: var(--shadow-glow); }
   .shadow-coral { box-shadow: var(--shadow-coral); }
   .shadow-card { box-shadow: var(--shadow-card); }
